@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Home | KANDO</title>
+  <meta charset="utf-8">
+  <link rel="icon" type="image/x-icon" href="/static/Logo1.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+    a {
+  position: relative;
+}
+a:hover{
+  text-decoration: none;
+}
+a::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    border-radius: 1px;
+    background-color:rgb(79, 74, 74);
+    bottom: 0;
+    left: 0;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform .3s ease-in-out;
+  }
+
+a:hover::before {
+  transform-origin: left;
+  transform: scaleX(1);
+}
+.col-sm-2 a{
+  
+  color: rgb(7, 14, 29)
+}
+.col-sm-2 a:hover{
+  color: rgb(42, 41, 41)
+}
+.navbar-brand a:hover{
+  color: black;
+}
+  </style>
+</head>
+<body>
+
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    
+      <div class="navbar-header">
+       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href=""><img src = "/static/Logo1.svg" alt="logo" height="100%"/></a>
+      <a class="navbar-brand" href="/home">KANDO</a>
+      
+      </div>
+     <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li ><a href="/home">Dashboard</a></li>
+        <li><a href="/tasks">Tasks</a></li>
+        <li><a href="/about">About</a></li>
+        <li class="active"><a  href="/sql">SQL</a></li>
+    
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a><b>{{user}}'s KANDO </b></a></li>
+        <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+</body>
+</html>

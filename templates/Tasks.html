@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Tasks | KANDO</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="/static/Logo1.svg">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+    a {
+  position: relative;
+}
+.col-sm-2 a{
+  
+  color: rgb(7, 14, 29)
+}
+a:hover{
+  text-decoration: none;
+}
+a::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    border-radius: 1px;
+    background-color:rgb(79, 74, 74);
+    bottom: 0;
+    left: 0;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform .3s ease-in-out;
+  }
+
+a:hover::before {
+  transform-origin: left;
+  transform: scaleX(1);
+}
+.jumbotron{
+  padding-top: 0%;
+}
+  </style>
+<script>
+  function allowDrop(ev) {
+    ev.preventDefault();
+  }
+  
+  function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+  }
+  
+  function drop(ev) {
+   console.log("dropped")
+  }
+
+function myFunction() {
+  if (confirm("Confirm deletion of list and all its tasks") == true) {
+    text = "You pressed OK!";
+    return 1
+  } else {
+    text = "You canceled!";
+    return 0
+  }
+}
+function myDropFunc(x){
+  console.log(x)
+}
+
+function myFunction2(x) {
+  if (confirm("Confirm deletion of task") == true) {
+    window.location = "/deletec/" + x;
+    text = "You pressed OK!";
+    return 1
+  } else {
+    // Simulate a mouse click:
+    window.location = "/tasks";
+    text = "You cancelled!";
+    return 0
+  }
+}
+  </script>
+</head>
+<body>
+
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+      <div class="navbar-header">
+       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href=""><img src = "/static/Logo1.svg" alt="logo" height="100%"/></a>
+      <a class="navbar-brand" href="/home">KANDO</a>
+      </div>
+     <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li ><a href="/home">Dashboard</a></li>
+        <li class="active"><a href="/tasks">Tasks</a></li>
+        <li><a class="active" href="/about">About</a></li>
+        <li><a  href="/sql">SQL</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a><b>{{user}}'s KANDO </b></a></li>
+        <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HEADING-->
+<div class="container text-left">
+<h1>My Tasks</h1>
+<hr style="height: 1px;background-color:grey;width:100%"/>
+</div>
+<!-- HEADING-->
+
+
+
+
+<!--BODY-->
+{% if msg == 'No phases found' %}
+  <div class="container text-center">
+    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+    <h2>No tasks found </h2>
+    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+  </div>
+
+{% else %}
+
+<!--PHASES-->
+    {% for x in phases %}
+    <div class=" jumbotron container text-center" ondrop="drop(event)" ondragover="allowDrop(event)">
+                            
+        <!--INDIVIDUAL BOARD-->  
+        <h3>
+        {{x['phase_name']}}
+        </h3> 
+        <b><a href="create/{{x['phase_name']}}"> + </a></b>  
+        &nbsp;&nbsp;
+        <b><a onclick="myFunction()" href="delete/{{x['phase_name']}}" "> x </a></b>    
+
+        <div class="container-fluid bg-3 text-center">    
+          <div class="row">
+        {% for y in cards %}
+          {% if y['phase_name']==x['phase_name'] %}
+  
+              <div class="col-sm-2">
+                <div class="card text-white mb-3" style='max-width: 18rem ;background-color: {{y["color"]}}' draggable="true" ondragstart="drag(event)" ondragleave="myDropFunc({{y['card_id']}})">
+                  <h3><a href="/changename/{{y['card_id']}}">{{y['title']}}</a></h3>
+                  <div class="card-body">
+                    <h5 class="card-title">{{y['deadline']}}</h5>
+                    <p class="card-text"><small>{{y['content']}}</small></p>
+                    <div><a href="/carddone/{{y['card_id']}}">&#10004;</a> &nbsp; &nbsp;<a onclick="myFunction2({{y['card_id']}})" >X</a></div>
+                    <!--href="/deletec/{{y['card_id']}}"-->
+                  </div>
+                </div>
+              </div>     
+              
+              {% if namechange == 1 and y['card_id'] == card_id %} 
+                
+              <form action="/changename/{{y['card_id']}}" method="POST" id="rename-card-form"> 
+              <br/>
+              <label>New Name &nbsp; </label>
+              <input type="text" name="newname" />
+              <input type="submit" value = "Submit">
+              <a href="/tasks">Cancel</a>
+              </form>
+                
+              {% endif %}
+          {% endif %}
+        {% endfor %}
+          </div>
+        </div>
+        <!--INDIVIDUAL BOARD-->  
+
+        <!--ADD-->
+        {% if addcard == 1 and x['phase_name'] == phasename %}
+
+        <div class="container text-left">
+          <form action="/create/{{x['phase_name']}}" method="POST" id="add-card-form"> 
+
+            <div class = "jumbotron">
+              <br/>
+              <label>Title &nbsp; </label>
+              <input type="text" name="title" />
+              <br/>
+              <label>Deadline &nbsp; </label>
+              <input type="date" name="deadline" /><br/>
+              <label>Description &nbsp; </label>
+              <input type="text" name="content" /> <br/>
+              <label>Color &nbsp; </label>
+              <input type="color" name="color" />
+            </div>
+
+            <div>
+              <input type="submit" value = "Submit"> &nbsp;&nbsp;
+              <a href="/tasks">Cancel</a>
+            </div>
+          </form>
+        </div>
+        {% endif %}
+        <!--ADD-->
+        
+    </div>  
+    </div>
+    {% endfor %} 
+    <!--PHASES-->
+
+{% endif %}
+<!--BODY-->
+</div>
+
+
+
+<div class="container text-center">
+  <h2><a href="/addtask" type="button"> Add task</a></h2>
+</div>
+{% if add==1 %}
+<div class="container text-left">
+  <form action="/addtask" method="POST" id="add-task-form"> 
+    <div class = "jumbotron">
+      <br/><br/><br/>
+      <label>Title &nbsp; </label>
+      <input type="text" name="title" />
+    </div>
+
+    <div>
+      <input type="submit" value = "Submit"> &nbsp;&nbsp;
+      <a href="/tasks">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endif %}
+
+</body>
+</html>
